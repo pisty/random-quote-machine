@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="content has-text-centered">
-                        <button class="button is-rounded is-white is-large">New quote</button>
+                        <button @click="getQuote()" class="button is-rounded is-white is-large">New quote</button>
                     </div>
                 </div>
             </article>
@@ -50,18 +50,29 @@
             loading: true
         },
         created: function () {
-            var self = this
-            axios.get('http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1')
-                .then(function (response) {
-                    self.author = response.data[0].title;
-                    self.quote = response.data[0].content;
-                    setTimeout(function () {
-                         self.loading = false
-                    }, 500);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
+            this.getQuote();
+        },
+        methods: {
+            getQuote() {
+                var v = new Date();
+                var self = this;
+                axios.get(
+                    'https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&v='+v.getTime(),
+                    {
+                        withCredentials: true
+                    }
+                )
+                    .then(function (response) {
+                        self.author = response.data[0].title;
+                        self.quote = response.data[0].content;
+                        setTimeout(function () {
+                            self.loading = false
+                        }, 500);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+            }
         }
     })
 </script>
